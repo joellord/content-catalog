@@ -1,0 +1,17 @@
+export default function GridItem(props) {
+
+  const { image_url, name, category, price } = props;
+  
+  return (
+    <div className="card">
+      <img src={image_url} className="card-img-top" alt="" />
+      <div className="card-body">
+        <h5 className="card-title">{name}</h5>
+        <p className="card-text">{price}</p>
+      </div>
+      <ul className="list-group list-group-flush">
+        <li className="list-group-item">{category}</li>
+      </ul>
+    </div>
+  )
+}
