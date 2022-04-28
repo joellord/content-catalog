@@ -16,6 +16,10 @@
   background-color: #00684a;
 }
 
+.strikethrough {
+  text-decoration: line-through;
+}
+
 .footer-logo {
   width: 100px;
 }

@@ -2,6 +2,9 @@ import ImgLogo from "../assets/logo.png";
 import Search from "./Search";
 
 export default function Header() {
+  let linkStyle = {color: "#00684a"};
+  let activeLinkStyle = {backgroundColor: "#00684a"};
+
   return (
     <div className="header">
       <header className="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
@@ -11,10 +14,10 @@ export default function Header() {
         </a>
 
         <ul className="nav nav-pills">
-          <li className="nav-item"><a href="." className="nav-link">Home</a></li>
-          <li className="nav-item"><a href="." className="nav-link active" aria-current="page">Search and Shop</a></li>
-          <li className="nav-item"><a href="." className="nav-link">Contact</a></li>
-          <li className="nav-item"><a href="https://mongodb.com/developer" className="nav-link">Blog</a></li>
+          <li className="nav-item"><a style={linkStyle} href="." className="nav-link">Home</a></li>
+          <li className="nav-item"><a style={activeLinkStyle} href="." className="nav-link active" aria-current="page">Search and Shop</a></li>
+          <li className="nav-item"><a style={linkStyle} href="." className="nav-link">Contact</a></li>
+          <li className="nav-item"><a style={linkStyle} href="https://mongodb.com/developer" className="nav-link">Blog</a></li>
         </ul>
 
       </header>

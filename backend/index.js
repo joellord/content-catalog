@@ -18,6 +18,7 @@ const getMongoDB = async () => {
     const client = await MongoClient.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     db = await client.db("grocery");
     dbConnected = true;  
+    console.log("Database is connected and ready to go!")
   } catch (e) {
     console.log(e.toString());
   }
@@ -47,23 +48,36 @@ app.get("/health", (req, res) => {
 });
 
 // This route serves items filtered by a specific search term
-// TODO: Update this to use Atlas Search
+
 app.get("/search/:query", async (req, res) => {
   log("/search", `GET request with param ${req.params.query}`);
   let results = [];
   try {
-    // results = await itemCollection.find({name: req.params.query}).toArray();
+    /** TODO: Update this to use Atlas Search */
     results = await itemCollection.aggregate([
       { $search: {
           index: 'default',
-          text: {
-            query: req.params.query,
-            path: ["name", "brand", "category", "tags"]
+          compound: {
+            must: [
+              {text: {
+                query: req.params.query,
+                path: ["name", "brand", "category", "tags"],
+                fuzzy: {}
+              }},
+              {exists: {
+                path: "price_special",
+                score: {
+                  boost: {
+                    value: 3
+                  }
+                }
+              }}
+            ]
           }
         }
       }
     ]).toArray();
-
+    /** End */
   }
   catch(e) {
     log("/search", e.toString());
@@ -75,7 +89,7 @@ app.get("/autocomplete/:query", async (req, res) => {
   log("/autocomplete", `GET request with param ${req.params.query}`);
   let results = [];
   try {
-    // INSERT AUTOCOMPLETE AGGREGATION CODE HERE
+    // TODO: Insert the functionality here
     results = await itemCollection.aggregate([
       {
         '$search': {
@@ -91,17 +105,17 @@ app.get("/autocomplete/:query", async (req, res) => {
           }
         }
       }, {
+        '$limit': 5
+      }, {
         '$project': {
           'name': 1, 
           'highlights': {
             '$meta': 'searchHighlights'
           }
         }
-      }, {
-        '$limit': 5
       }
     ]).toArray();
-
+    /** End */
   }
   catch(e) {
     log("/search", e.toString());
