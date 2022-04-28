@@ -27,7 +27,7 @@ let db;
 let itemCollection;
 getMongoDB().then(async _db => {
   db = _db;
-  itemCollection = await db.collection("clean_items");
+  itemCollection = await db.collection("items");
 });
 
 let app = express();
@@ -73,10 +73,9 @@ app.get("/search/:query", async (req, res) => {
 
 app.get("/autocomplete/:query", async (req, res) => {
   log("/autocomplete", `GET request with param ${req.params.query}`);
-  log("/search", `GET request with param ${req.params.query}`);
   let results = [];
   try {
-    // results = await itemCollection.find({name: req.params.query}).toArray();
+    // INSERT AUTOCOMPLETE AGGREGATION CODE HERE
     results = await itemCollection.aggregate([
       {
         '$search': {
@@ -126,7 +125,9 @@ app.get("/categories", async (req, res) => {
   } catch(e) {
     log("/categories", e.toString());
   }
-  res.send(results).status(200);
+
+  let processedResults = results[0].categories;
+  res.send(processedResults).status(200);
 });
 
 app.get("/items/category/:category", async (req, res) => {

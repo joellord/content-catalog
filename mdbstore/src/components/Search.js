@@ -1,35 +1,38 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { updateSearchTerm, fetchTextSearch, fetchAutocompleteSuggestions } from "../redux/searchSlice";
+import { useHistory } from "react-router-dom";
+import config from "../config";
 
 export default function Search(props) {
   let [ suggestions, setSuggestions ] = useState([]);
-  const searchTerm = useSelector(state => state.search.searchTerm);
-  const dispatch = useDispatch();
+  let [ query, setQuery ] = useState("");
+  let history = useHistory();
 
-  const handleSearchButton = async () => {
-    dispatch(fetchTextSearch(searchTerm));
+  const handleSearchButton = async (e) => {
+    e.preventDefault();
+    history.push(`/search/${query}`);
   }
 
   const handleSearchTermChange = (e) => {
-    dispatch(updateSearchTerm(e.target.value));
+    e.preventDefault();
+    setQuery(e.target.value);
   }
 
   const handleKeyUp = async (e) => {
-    let result = await dispatch(fetchAutocompleteSuggestions(e.target.value));
-    setSuggestions(result.payload);
+    e.preventDefault();
+    let result = await fetch(`${config.BASE_URL}/autocomplete/${query}`).then(r => r.json());
+    setSuggestions(result);
   }
 
   return (
     <div className="search-bar row justify-content-center">
       <div className="col-10">
-        <form className="p-4" onSubmit={e => {e.preventDefault(); handleSearchButton();}}>
+        <form className="p-4" onSubmit={handleSearchButton}>
           <div className="input-group">
-            <input value={searchTerm} onKeyUp={handleKeyUp} onChange={handleSearchTermChange} className="form-control" list="datalistOptions" placeholder="What are you looking for?" />
+            <input value={query} onKeyUp={handleKeyUp} onChange={handleSearchTermChange} className="form-control" list="datalistOptions" placeholder="What are you looking for?" />
             <datalist id="datalistOptions">
-              {suggestions.map(s => {
+              {suggestions.map((s, index) => {
                 return (
-                  <option value={s.name} />
+                  <option key={index} value={s.name} />
                 )
               })}
             </datalist>

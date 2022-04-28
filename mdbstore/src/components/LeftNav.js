@@ -1,22 +1,26 @@
-import { Fragment } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchByCategory } from "../redux/searchSlice";
+import { Fragment, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import config from "../config";
 
 export default function LeftNav() {
-  const dispatch = useDispatch();
-  const categories = useSelector(state => state.search.categories);
+  let [categories, setCategories] = useState([]);
 
-  const handleCategoryClick = async (category) => {
-    dispatch(fetchByCategory(category));
-  }
+  useEffect(() => {
+    const getCategories = async () => {
+      let categories = await fetch(`${config.BASE_URL}/categories`).then(r => r.json());
+      setCategories(categories);
+    }
+
+    getCategories();
+  }, []);
 
   return (
     <Fragment>
       <ul className="list-group">
         {categories.map((c, index) => {
           return (
-            <li key={`li${index}`} onClick={() => handleCategoryClick(c._id)} className="categ-filter list-group-item d-flex justify-content-between align-items-center">
-              {c._id}
+            <li key={`li${index}`} className="categ-filter list-group-item d-flex justify-content-between align-items-center">
+              <Link className="categ-link" to={`/category/${c._id}`}>{c._id}</Link>
               <span className="badge bg-dark-green rounded-pill">{c.count}</span>
             </li>
           )
